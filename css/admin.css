@@ -1,0 +1,85 @@
+/* ---------- 대시보드(일정 목록) ---------- */
+#dash-screen { min-height: 100%; padding: 40px 20px; }
+.dash-wrap { max-width: 560px; margin: 0 auto; }
+.dash-wrap .head { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; }
+.dash-wrap .eyebrow {
+  font-size: 11px; letter-spacing: .14em; color: var(--line);
+  font-weight: 700; text-transform: uppercase; margin-bottom: 6px;
+}
+.dash-wrap h1 { font-size: 24px; font-weight: 800; }
+
+.trip-row {
+  display: flex; justify-content: space-between; align-items: center;
+  background: var(--ink-card);
+  border: 1px solid var(--ink-soft);
+  border-radius: 12px;
+  padding: 16px 18px;
+  margin-bottom: 10px;
+}
+.trip-row .t { font-size: 15px; font-weight: 800; }
+.trip-row .d { font-size: 12px; color: var(--text-dim); margin-top: 2px; }
+.trip-row .code { font-size: 12px; color: var(--amber); margin-top: 2px; }
+.trip-row .acts { display: flex; gap: 6px; }
+.empty { color: var(--text-dim); font-size: 14px; text-align: center; padding: 40px 0; }
+
+/* ---------- 편집 화면 ---------- */
+#edit-screen { display: flex; height: 100vh; overflow: hidden; }
+
+#edit-panel {
+  width: 420px; min-width: 420px;
+  display: flex; flex-direction: column;
+  overflow-y: auto;
+  padding: 20px 22px 30px;
+}
+#edit-panel .head { display: flex; justify-content: space-between; align-items: center; margin-bottom: 6px; }
+#edit-panel h2 { font-size: 18px; font-weight: 800; }
+
+.hint {
+  font-size: 12px; color: var(--text-dim);
+  background: var(--ink-card);
+  border: 1px solid var(--ink-soft);
+  border-radius: 8px;
+  padding: 10px 12px;
+  margin-top: 14px;
+  line-height: 1.5;
+}
+
+/* 정거장 편집 카드 */
+#stop-list { margin-top: 14px; }
+.stop-card {
+  background: var(--ink-card);
+  border: 1px solid var(--ink-soft);
+  border-radius: 10px;
+  padding: 12px 14px;
+  margin-bottom: 10px;
+}
+.stop-card .row1 { display: flex; align-items: center; gap: 8px; margin-bottom: 8px; }
+.stop-card .num {
+  width: 24px; min-width: 24px; height: 24px;
+  border-radius: 50%;
+  border: 2px solid var(--line);
+  color: var(--line);
+  font-size: 12px; font-weight: 800;
+  display: flex; align-items: center; justify-content: center;
+}
+.stop-card input { padding: 7px 10px; font-size: 13px; }
+.stop-card .name-in { flex: 1; }
+.stop-card .time-in { width: 84px; }
+.stop-card .row2 { display: flex; gap: 8px; margin-bottom: 8px; }
+.stop-card .coord { font-size: 11px; color: var(--text-dim); flex: 1; align-self: center; }
+.stop-card .coord.unset { color: var(--amber); }
+.stop-card .acts { display: flex; gap: 4px; }
+
+#edit-map { flex: 1; height: 100%; background: #dfe6ec; cursor: crosshair; }
+
+.save-bar { margin-top: 18px; display: flex; gap: 8px; }
+.save-bar .btn { flex: 1; }
+#save-msg { font-size: 13px; margin-top: 10px; min-height: 18px; }
+#save-msg.ok { color: var(--line); }
+#save-msg.err { color: var(--red); }
+
+@media (max-width: 860px) {
+  #edit-screen { flex-direction: column; }
+  #edit-map { height: 42%; flex: none; order: 0; }
+  #edit-panel { width: 100%; min-width: 0; height: 58%; order: 1; }
+}
