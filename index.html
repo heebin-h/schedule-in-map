@@ -2,8 +2,8 @@
 <html lang="ko">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Schedule in Map</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<title>일정 지도</title>
 <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css">
 <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable-dynamic-subset.min.css">
@@ -15,49 +15,44 @@
 <!-- 1. 일정 리스트 -->
 <div id="list-screen">
   <div class="list-wrap">
-    <div class="eyebrow">Schedule in Map</div>
-    <h1>공유된 일정</h1>
+    <div class="branch-chip hidden" id="branch-chip"></div>
+    <h1>일정</h1>
+    <p class="sub">보고 싶은 일정을 선택하세요</p>
     <div id="trip-list"><div class="empty">불러오는 중…</div></div>
   </div>
 </div>
 
-<!-- 2. 초대 코드 게이트 -->
+<!-- 2. 초대 코드 -->
 <div id="code-screen" class="gate hidden">
-  <div class="gate-card">
-    <div class="eyebrow">Invite</div>
+  <div class="gate-card card">
     <h1 id="code-title"></h1>
-    <p class="sub">이 일정을 보려면 초대 코드가 필요합니다.</p>
+    <p class="sub">초대 코드를 입력하면 일정을 볼 수 있어요</p>
     <label for="code-input">초대 코드</label>
     <input id="code-input" type="password" autocomplete="off" placeholder="코드 입력">
-    <button class="btn" id="code-btn">열기</button>
-    <button class="btn ghost" id="code-back" style="margin-top:8px">← 목록으로</button>
+    <button class="btn" id="code-btn">확인</button>
+    <button class="btn ghost back" id="code-back">뒤로</button>
     <div class="err" id="code-err"></div>
   </div>
 </div>
 
 <!-- 3. 뷰어 -->
 <div id="viewer-screen" class="hidden">
+  <div id="map"></div>
   <div id="panel">
     <header>
       <div class="top">
-        <div class="eyebrow">Route</div>
+        <div>
+          <h1 id="trip-title"></h1>
+          <div class="date" id="trip-date"></div>
+        </div>
         <button class="btn ghost sm" id="viewer-back">목록</button>
       </div>
-      <h1 id="trip-title"></h1>
-      <div class="date" id="trip-date"></div>
     </header>
-
-    <div id="live-box">
-      <div class="row">
-        <input id="my-name" placeholder="내 이름" maxlength="12">
-        <button class="btn sm" id="live-btn">위치 공유</button>
-      </div>
-      <div id="live-status">공유를 켜면 이 일정을 보는 사람에게 내 위치가 표시됩니다</div>
+    <div id="locate-bar">
+      <button class="btn weak" id="locate-btn">📍 내 위치 표시</button>
     </div>
-
     <div id="stops"></div>
   </div>
-  <div id="map"></div>
 </div>
 
 <script type="module" src="js/viewer.js"></script>

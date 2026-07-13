@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<title>일정 만들기</title>
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css">
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable-dynamic-subset.min.css">
+<link rel="stylesheet" href="css/base.css">
+<link rel="stylesheet" href="css/editor.css">
+</head>
+<body>
+
+<div id="editor-screen">
+  <div id="editor-map"></div>
+  <div id="editor-panel">
+    <div class="head">
+      <div>
+        <h1>일정 만들기</h1>
+        <div class="sub">지도를 클릭해 정거장을 추가하세요</div>
+      </div>
+      <button class="btn ghost sm" id="load-btn">JSON 열기</button>
+      <input type="file" id="load-input" accept=".json" class="hidden">
+    </div>
+
+    <div class="row2">
+      <div>
+        <label for="f-id">파일 이름 (영문/숫자/하이픈)</label>
+        <input id="f-id" placeholder="seoul-day">
+      </div>
+      <div>
+        <label for="f-date">날짜</label>
+        <input id="f-date" placeholder="2026. 7. 18 (토)">
+      </div>
+    </div>
+
+    <label for="f-title">제목</label>
+    <input id="f-title" placeholder="서울 당일치기">
+
+    <label for="f-code">초대 코드 (비우면 누구나 열람)</label>
+    <input id="f-code" placeholder="선택 사항">
+
+    <div id="stop-list"></div>
+    <button class="btn weak" id="add-stop-btn">+ 정거장 추가 (좌표는 지도 클릭)</button>
+
+    <div class="hint">
+      📍를 누른 뒤 지도를 클릭하면 그 정거장의 좌표가 바뀌어요.
+    </div>
+
+    <div class="export-box">
+      <button class="btn" id="export-btn">JSON 내려받기</button>
+      <div id="export-msg"></div>
+    </div>
+  </div>
+</div>
+
+<script type="module" src="js/editor.js"></script>
+</body>
+</html>

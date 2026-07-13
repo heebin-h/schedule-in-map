@@ -1,84 +1,117 @@
-// 공유 페이지: 리스트 → 초대 코드 → 뷰어(지도 + 일정 + 실시간 위치)
-import { sha256, subscribeTripList, getTripStops } from "./store.js";
-import { createMap, renderRoute, clearLayers, esc } from "./map.js";
-import { LiveShare } from "./live.js";
+// 공유 페이지: data/ 폴더의 JSON을 읽어 리스트 → (코드) → 뷰어
+// ?b=브랜치  해당 브랜치 데이터 사용
+// ?t=일정id  해당 일정 바로 열기 (코드 있으면 코드 화면부터)
+import { branch, getTripIndex, getTrip, verifyCode } from "./data.js";
+import { createMap, renderRoute, clearLayers, myLocationMarker, esc } from "./map.js";
 
 const $ = id => document.getElementById(id);
 const screens = ["list-screen", "code-screen", "viewer-screen"];
-function show(id) { screens.forEach(s => $(s).classList.toggle("hidden", s !== id)); }
+const show = id => screens.forEach(s => $(s).classList.toggle("hidden", s !== id));
 
-let trips = [];
-let selected = null;      // {id, title, date}
+let index = [];
+let selected = null;   // index 항목
+let trip = null;       // 상세 데이터
 let map = null;
 let routeLayers = [];
 let routeMarkers = [];
-let live = null;
+let items = [];
+let myMarker = null;
+let watchId = null;
+
+if (branch) {
+  const chip = $("branch-chip");
+  chip.textContent = `브랜치: ${branch}`;
+  chip.classList.remove("hidden");
+}
 
 // ---------- 1. 리스트 ----------
-subscribeTripList(list => {
-  trips = list;
-  const el = $("trip-list");
-  if (!list.length) {
-    el.innerHTML = `<div class="empty">아직 공유된 일정이 없습니다</div>`;
+(async () => {
+  try {
+    index = await getTripIndex();
+  } catch (e) {
+    $("trip-list").innerHTML = `<div class="error">일정을 불러오지 못했어요<br><span style="font-size:13px">${esc(e.message)}</span></div>`;
     return;
   }
-  el.innerHTML = list.map(t => `
-    <div class="trip-card" data-id="${t.id}">
+  renderList();
+
+  // 딥링크 ?t=id
+  const t = new URLSearchParams(location.search).get("t");
+  if (t) {
+    const found = index.find(x => x.id === t);
+    if (found) select(found);
+  }
+})();
+
+function renderList() {
+  const el = $("trip-list");
+  if (!index.length) {
+    el.innerHTML = `<div class="empty">아직 등록된 일정이 없어요</div>`;
+    return;
+  }
+  el.innerHTML = index.map(t => `
+    <div class="trip-card card" data-id="${esc(t.id)}">
       <div>
         <div class="t">${esc(t.title)}</div>
         <div class="d">${esc(t.date || "")}</div>
       </div>
-      <div class="arrow">→</div>
+      <div class="right">
+        ${t.locked ? `<span class="lock">초대 코드</span>` : ""}
+        <span class="arrow">›</span>
+      </div>
     </div>`).join("");
-  el.querySelectorAll(".trip-card").forEach(card => {
-    card.addEventListener("click", () => {
-      selected = trips.find(t => t.id === card.dataset.id);
-      $("code-title").textContent = selected.title;
-      $("code-input").value = "";
-      $("code-err").textContent = "";
-      show("code-screen");
-      $("code-input").focus();
-    });
-  });
-});
+  el.querySelectorAll(".trip-card").forEach(card =>
+    card.addEventListener("click", () => select(index.find(x => x.id === card.dataset.id))));
+}
 
-// ---------- 2. 초대 코드 ----------
-$("code-btn").addEventListener("click", enterTrip);
-$("code-input").addEventListener("keydown", e => { if (e.key === "Enter") enterTrip(); });
-$("code-back").addEventListener("click", () => show("list-screen"));
-
-async function enterTrip() {
-  const code = $("code-input").value.trim();
-  if (!code) return;
-  $("code-err").textContent = "";
-  const codeHash = await sha256(code);
-  const stops = await getTripStops(selected.id, codeHash);
-  if (!stops) {
-    $("code-err").textContent = "초대 코드가 올바르지 않습니다";
+async function select(t) {
+  selected = t;
+  try {
+    trip = await getTrip(t.id);
+  } catch (e) {
+    alert("일정 데이터를 불러오지 못했어요: " + e.message);
     return;
   }
-  openViewer(stops, codeHash);
+  if (trip.codeHash) {
+    $("code-title").textContent = trip.title;
+    $("code-input").value = "";
+    $("code-err").textContent = "";
+    show("code-screen");
+    $("code-input").focus();
+  } else {
+    openViewer();
+  }
+}
+
+// ---------- 2. 코드 ----------
+$("code-btn").addEventListener("click", submitCode);
+$("code-input").addEventListener("keydown", e => { if (e.key === "Enter") submitCode(); });
+$("code-back").addEventListener("click", () => show("list-screen"));
+
+async function submitCode() {
+  const code = $("code-input").value;
+  if (!code.trim()) return;
+  if (await verifyCode(trip, code)) openViewer();
+  else $("code-err").textContent = "초대 코드가 맞지 않아요";
 }
 
 // ---------- 3. 뷰어 ----------
-function openViewer(stops, codeHash) {
+function openViewer() {
   show("viewer-screen");
-  $("trip-title").textContent = selected.title;
-  $("trip-date").textContent = selected.date || "";
-  document.title = `${selected.title} | Schedule in Map`;
+  $("trip-title").textContent = trip.title;
+  $("trip-date").textContent = trip.date || "";
+  document.title = trip.title;
 
   if (!map) map = createMap("map");
-  map.invalidateSize();
+  setTimeout(() => map.invalidateSize(), 50);
 
   clearLayers(map, routeLayers);
-  const r = renderRoute(map, stops, i => setActive(i, false));
+  const r = renderRoute(map, trip.stops, i => setActive(i, false));
   routeLayers = r.layers;
   routeMarkers = r.markers;
 
-  // 사이드바
   const listEl = $("stops");
   listEl.innerHTML = "";
-  const items = stops.map((s, i) => {
+  items = trip.stops.map((s, i) => {
     const item = document.createElement("div");
     item.className = "stop";
     item.innerHTML = `
@@ -92,68 +125,49 @@ function openViewer(stops, codeHash) {
     listEl.appendChild(item);
     return item;
   });
-
-  window.__setActive = (i, fly) => {
-    items.forEach(el => el.classList.remove("active"));
-    items[i].classList.add("active");
-    items[i].scrollIntoView({ block: "nearest", behavior: "smooth" });
-    if (fly) map.flyTo([stops[i].lat, stops[i].lng], Math.max(map.getZoom(), 15), { duration: .7 });
-    routeMarkers[i].openPopup();
-  };
-
-  // 실시간 위치
-  if (live) live.destroy();
-  live = new LiveShare(map, selected.id, codeHash);
-  live.subscribe();
-  updateLiveUI();
-
-  $("my-name").value = localStorage.getItem("sim_name") || "";
 }
 
-function setActive(i, fly) { window.__setActive(i, fly); }
-
-// ---------- 위치 공유 컨트롤 ----------
-$("live-btn").addEventListener("click", () => {
-  if (!live) return;
-  if (live.sharing) {
-    live.stop();
-    setStatus("공유 중지됨", "");
-  } else {
-    const name = $("my-name").value.trim() || "익명";
-    localStorage.setItem("sim_name", name);
-    setStatus("위치 권한 요청 중…", "");
-    live.start(name, msg => {
-      setStatus(msg, msg === "공유 중" ? "on" : "err");
-      if (msg !== "공유 중") updateLiveUI();
-    });
-  }
-  updateLiveUI();
-});
-
-function updateLiveUI() {
-  $("live-btn").textContent = live && live.sharing ? "공유 끄기" : "위치 공유";
-  $("live-btn").classList.toggle("ghost", live && live.sharing);
+function setActive(i, fly) {
+  items.forEach(el => el.classList.remove("active"));
+  items[i].classList.add("active");
+  items[i].scrollIntoView({ block: "nearest", behavior: "smooth" });
+  if (fly) map.flyTo([trip.stops[i].lat, trip.stops[i].lng], Math.max(map.getZoom(), 15), { duration: .6 });
+  routeMarkers[i].openPopup();
 }
 
-function setStatus(msg, cls) {
-  const el = $("live-status");
-  el.textContent = msg;
-  el.className = cls;
-  el.id = "live-status";
-}
-
-// ---------- 뒤로가기 ----------
 $("viewer-back").addEventListener("click", () => {
-  if (live) { live.destroy(); live = null; }
-  updateLiveUIReset();
+  stopLocate();
   show("list-screen");
+  document.title = "일정 지도";
 });
 
-function updateLiveUIReset() {
-  $("live-btn").textContent = "위치 공유";
-  $("live-btn").classList.remove("ghost");
-  setStatus("공유를 켜면 이 일정을 보는 사람에게 내 위치가 표시됩니다", "");
-}
+// ---------- 내 위치 (본인 화면 표시용, 공유 아님) ----------
+$("locate-btn").addEventListener("click", () => {
+  if (watchId != null) { stopLocate(); return; }
+  if (!navigator.geolocation) { alert("이 브라우저는 위치를 지원하지 않아요"); return; }
 
-// 페이지 이탈 시 위치 공유 정리 (onDisconnect가 백업)
-window.addEventListener("beforeunload", () => { if (live) live.stop(); });
+  $("locate-btn").textContent = "위치 확인 중…";
+  watchId = navigator.geolocation.watchPosition(
+    pos => {
+      const { latitude: lat, longitude: lng } = pos.coords;
+      if (myMarker) myMarker.setLatLng([lat, lng]);
+      else {
+        myMarker = myLocationMarker(map, lat, lng);
+        map.flyTo([lat, lng], Math.max(map.getZoom(), 14), { duration: .6 });
+      }
+      $("locate-btn").textContent = "📍 내 위치 끄기";
+    },
+    () => {
+      alert("위치를 가져올 수 없어요. 권한을 확인해주세요.");
+      stopLocate();
+    },
+    { enableHighAccuracy: true, maximumAge: 5000, timeout: 15000 },
+  );
+});
+
+function stopLocate() {
+  if (watchId != null) navigator.geolocation.clearWatch(watchId);
+  watchId = null;
+  if (myMarker) { map.removeLayer(myMarker); myMarker = null; }
+  $("locate-btn").textContent = "📍 내 위치 표시";
+}

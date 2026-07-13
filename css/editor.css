@@ -1,0 +1,80 @@
+#editor-screen { display: flex; height: 100vh; height: 100dvh; overflow: hidden; background: #fff; }
+
+#editor-panel {
+  width: 440px;
+  min-width: 440px;
+  overflow-y: auto;
+  padding: 24px 24px 40px;
+  background: #fff;
+  z-index: 500;
+  box-shadow: 4px 0 24px rgba(0, 23, 51, .06);
+}
+
+#editor-panel .head { display: flex; justify-content: space-between; align-items: center; }
+#editor-panel h1 { font-size: 21px; font-weight: 800; letter-spacing: -0.02em; }
+#editor-panel .sub { font-size: 14px; color: var(--text-weak); margin-top: 4px; }
+
+.hint {
+  font-size: 13px;
+  color: var(--text-sub);
+  background: var(--blue-weak);
+  border-radius: var(--radius-sm);
+  padding: 12px 14px;
+  margin-top: 16px;
+  line-height: 1.55;
+}
+
+.row2 { display: flex; gap: 10px; }
+.row2 > div { flex: 1; }
+
+/* 정거장 카드 */
+#stop-list { margin-top: 16px; }
+.stop-card {
+  background: var(--bg);
+  border-radius: var(--radius-sm);
+  padding: 14px;
+  margin-bottom: 10px;
+}
+.stop-card input { background: #fff; padding: 10px 12px; font-size: 14px; }
+.stop-card .r1 { display: flex; align-items: center; gap: 8px; margin-bottom: 8px; }
+.stop-card .num {
+  width: 26px; min-width: 26px; height: 26px;
+  border-radius: 50%;
+  background: var(--blue);
+  color: #fff;
+  font-size: 12px; font-weight: 700;
+  display: flex; align-items: center; justify-content: center;
+}
+.stop-card .name-in { flex: 1; }
+.stop-card .time-in { width: 90px; }
+.stop-card .r2 { margin-bottom: 8px; }
+.stop-card .r3 { display: flex; align-items: center; gap: 6px; }
+.stop-card .coord { flex: 1; font-size: 12px; color: var(--text-weak); }
+.stop-card .coord.unset { color: var(--red); font-weight: 600; }
+
+#add-stop-btn { margin-top: 4px; }
+
+.export-box { margin-top: 24px; }
+#export-msg { font-size: 13px; margin-top: 10px; line-height: 1.6; }
+#export-msg.ok { color: #16a34a; }
+#export-msg.err { color: var(--red); }
+#export-msg code {
+  background: var(--bg);
+  padding: 2px 6px;
+  border-radius: 6px;
+  font-size: 12px;
+}
+
+#editor-map { flex: 1; height: 100%; background: #e9edf1; cursor: crosshair; }
+
+@media (max-width: 860px) {
+  #editor-screen { flex-direction: column; }
+  #editor-map { height: 40%; flex: none; order: 0; }
+  #editor-panel {
+    width: 100%; min-width: 0;
+    height: 60%;
+    order: 1;
+    border-radius: 24px 24px 0 0;
+    margin-top: -24px;
+  }
+}

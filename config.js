@@ -1,13 +1,6 @@
-// ============================================================
-// Firebase 콘솔 → 프로젝트 설정 → 웹 앱 → firebaseConfig 복사해서 붙여넣기
-// databaseURL 반드시 포함 (Realtime Database 생성 후 자동 포함됨)
-// ============================================================
-export const firebaseConfig = {
-  apiKey: "여기에_붙여넣기",
-  authDomain: "여기에_붙여넣기",
-  databaseURL: "여기에_붙여넣기",
-  projectId: "여기에_붙여넣기",
-  storageBucket: "여기에_붙여넣기",
-  messagingSenderId: "여기에_붙여넣기",
-  appId: "여기에_붙여넣기",
+// repo 정보. ?b=브랜치명 으로 접속하면 해당 브랜치의 data/를 불러옴.
+export const REPO = {
+  owner: "heebin-h",
+  name: "schedule-in-map",
+  defaultBranch: "main",
 };

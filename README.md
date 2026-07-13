@@ -1,76 +1,55 @@
 # Schedule in Map
 
-일정 루트를 지도에 공유하고, 참여자 실시간 위치까지 보여주는 정적 웹앱.
-GitHub Pages + Firebase Realtime Database.
+일정 루트를 지도에 공유하는 정적 웹앱. **DB 없음** — repo 안의 JSON 파일이 곧 데이터.
 
 ## 구조
 
 ```
-├── index.html      공유 페이지 (리스트 → 초대 코드 → 뷰어)
-├── admin.html      관리자 페이지 (비밀번호 → 일정 생성/수정)
-├── config.js       Firebase 설정 ← 직접 붙여넣기 필요
-├── css/
-│   ├── base.css    공통 토큰/컴포넌트
-│   ├── viewer.css
-│   └── admin.css
-└── js/
-    ├── firebase.js Firebase 초기화
-    ├── store.js    데이터 계층 (DB 경로는 전부 여기)
-    ├── map.js      Leaflet 헬퍼
-    ├── live.js     실시간 위치 공유
-    ├── viewer.js   index.html 엔트리
-    └── admin.js    admin.html 엔트리
+├── index.html      공유 페이지 (리스트 → 초대 코드 → 지도)
+├── editor.html     일정 만들기 도구 (JSON 생성기)
+├── config.js       repo 정보 (브랜치 데이터 로딩용)
+├── data/
+│   ├── index.json  일정 목록
+│   └── trips/      일정별 상세 JSON
+├── css/  base · viewer · editor
+└── js/   data(로딩 계층) · map · viewer · editor
 ```
 
-## 세팅 (1회, ~5분)
+## 일정 추가하는 법
 
-### 1. Firebase 프로젝트
+**방법 A — editor.html 사용 (권장)**
+1. `배포주소/editor.html` 접속
+2. 지도 클릭으로 정거장 추가, 제목/날짜/초대 코드 입력
+3. "JSON 내려받기" → 받은 파일을 `data/trips/`에 넣기
+4. 화면에 안내되는 항목을 `data/index.json`의 `trips` 배열에 추가
+5. 커밋 & 푸시 → 사이트에 바로 반영 (Pages 재배포 1~2분)
 
-1. https://console.firebase.google.com → 프로젝트 추가 (애널리틱스 꺼도 됨)
-2. 좌측 **빌드 → Realtime Database → 데이터베이스 만들기**
-   - 위치 아무거나 (asia-southeast1 권장)
-   - **테스트 모드로 시작** 선택
-3. **규칙** 탭에서 아래로 교체 후 게시 (테스트 모드는 30일 뒤 만료되므로 필수):
+**방법 B — 파일 직접 편집**
+`data/trips/seoul-day.json` 형식 참고해서 작성. 초대 코드를 걸려면 `codeHash`에 코드의 SHA-256 값을 넣고, `index.json` 항목에 `"locked": true` 표시.
 
-```json
-{
-  "rules": {
-    ".read": true,
-    ".write": true
-  }
-}
+## 브랜치별 일정 세트
+
+기본은 배포된 브랜치(main)의 `data/`를 읽음.
+URL에 `?b=브랜치명`을 붙이면 **그 브랜치의 data/를 읽음**:
+
+```
+https://heebin-h.github.io/schedule-in-map/?b=jeju-trip
 ```
 
-4. 프로젝트 개요 → 웹 앱 추가(`</>` 아이콘) → 등록 → `firebaseConfig` 객체 복사
-5. 이 repo의 `config.js`에 붙여넣기 (`databaseURL` 포함 확인)
+- 브랜치 만들고 `data/`만 갈아끼우면 일정 세트가 통째로 분리됨
+- 특정 일정 바로 열기: `?t=일정id` (조합 가능: `?b=jeju-trip&t=day1`)
+- 단, 브랜치 로딩은 raw.githubusercontent.com 을 쓰므로 **repo가 공개**여야 하고, 반영에 몇 분 캐시 지연이 있을 수 있음
 
-### 2. GitHub Pages
+## 초대 코드에 대해
 
-1. 새 repo 생성 → 이 폴더 내용물 전부 푸시 (index.html이 root에 오게)
-2. Settings → Pages → Branch: `main` / root → Save
-3. `https://<아이디>.github.io/<repo>/` ← 친구에게 줄 링크
-4. `.../admin.html` ← 관리자 페이지 (본인용)
+코드는 SHA-256 해시로만 저장돼서 파일을 열어봐도 코드 자체는 안 보임.
+다만 정적 사이트 특성상 일정 데이터(JSON)는 주소를 알면 직접 받을 수 있어서, **가벼운 잠금**이지 보안 장치가 아님. 민감한 정보는 넣지 말 것.
 
-## 사용 흐름
+## 내 위치
 
-**관리자 (admin.html)**
-1. 최초 접속 시 관리자 비밀번호 설정 → 이후 이 비번으로 로그인
-2. 새 일정 → 제목/날짜/초대 코드 입력
-3. **지도 클릭**으로 정거장 추가 → 이름/시간/메모 입력, ↑↓로 순서 조정
-4. 저장 → 공유 페이지에 즉시 반영
+뷰어의 "내 위치 표시"는 **본인 화면에만** 표시됨 (서버가 없어 다른 사람과 실시간 공유는 불가).
 
-**친구 (index.html)**
-1. 링크 접속 → 일정 목록에서 선택
-2. 초대 코드 입력 → 지도 + 시간별 일정 열람
-3. "위치 공유" 버튼 → 내 위치가 같은 일정 보는 사람 전원에게 실시간 표시
-   (명시적으로 켜야만 공유됨, 언제든 끄기 가능, 창 닫으면 자동 제거)
+## 배포
 
-## 보안 한계 (알고 쓸 것)
-
-- 정적 사이트라 비밀번호/초대 코드는 **친구용 잠금 수준**. 해시된 코드를 DB 경로로 써서 코드를 모르면 데이터를 못 읽게 했지만, 작정한 공격을 막는 구조는 아님.
-- 위치는 공유 버튼을 켠 동안만 DB에 기록되고 끄면/창 닫으면 삭제됨.
-- 민감한 일정에는 쓰지 말 것.
-
-## 관리자 비밀번호를 잊었다면
-
-Firebase 콘솔 → Realtime Database → `admin`과 `vaults` 노드 삭제 → admin.html 재접속하면 다시 설정 화면이 뜸. (일정 데이터는 유지되지만 초대 코드 목록은 사라지므로 일정도 다시 만드는 게 깔끔함)
+GitHub Pages: Settings → Pages → Branch `main` / root.
+공유 링크: `https://<아이디>.github.io/<repo>/`
