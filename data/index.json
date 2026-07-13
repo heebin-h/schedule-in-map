@@ -1,5 +1,16 @@
 {
   "trips": [
-    { "id": "seoul-day", "title": "서울 당일치기", "date": "2026. 7. 18 (토)", "locked": true }
+    {
+      "id": "seoul-day",
+      "title": "서울 당일치기",
+      "date": "2026. 7. 18 (토)",
+      "locked": true
+    },
+    {
+      "id": "robotgo-hongdae",
+      "title": "[로봇고] 7/25-26 홍대 약속 일정",
+      "date": "2026. 7. 25-26",
+      "locked": false
+    }
   ]
 }
