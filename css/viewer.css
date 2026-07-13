@@ -144,3 +144,25 @@
   #panel header h1 { font-size: 19px; }
   #list-screen { padding-top: 40px; }
 }
+
+.address {
+  margin-top: 4px;
+  font-size: 13px;
+  color: #666;
+  line-height: 1.4;
+}
+
+.map-link {
+  margin-top: 8px;
+}
+
+.map-link a {
+  color: #03c75a;
+  font-size: 13px;
+  text-decoration: none;
+  font-weight: 600;
+}
+
+.map-link a:hover {
+  text-decoration: underline;
+}

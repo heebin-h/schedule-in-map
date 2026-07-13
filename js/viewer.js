@@ -114,13 +114,32 @@ function openViewer() {
   items = trip.stops.map((s, i) => {
     const item = document.createElement("div");
     item.className = "stop";
+
     item.innerHTML = `
       <div class="dot">${i + 1}</div>
+
       <div class="info">
         <div class="time">${esc(s.time || "")}</div>
+
         <div class="name">${esc(s.name)}</div>
+
+        ${s.address ? `<div class="address">${esc(s.address)}</div>` : ""}
+
         ${s.memo ? `<div class="memo">${esc(s.memo)}</div>` : ""}
+
+        ${
+          s.url
+            ? `<div class="map-link">
+                <a href="${esc(s.url)}"
+                   target="_blank"
+                   rel="noopener noreferrer">
+                  📍 네이버 지도 열기
+                </a>
+              </div>`
+            : ""
+        }
       </div>`;
+
     item.addEventListener("click", () => setActive(i, true));
     listEl.appendChild(item);
     return item;
