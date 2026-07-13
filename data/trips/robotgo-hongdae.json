@@ -1,35 +1,38 @@
 {
   "title": "[로봇고] 7/25-26 홍대 약속 일정",
-  "date": "2026. 7. 25-26",
+  "date": "2026.07.25-26",
   "codeHash": "1426279dcbdf749f1edd7e89fd9db820fc3e5ce2930fa63ce9c5dce9af3da447",
-  "stops": [
+  "places": [
     {
-      "name": "집무실 공덕점",
-      "lat": 37.544,
-      "lng": 126.951,
       "time": "12:00",
-      "memo": "https://naver.me/Fy2BMztM"
+      "name": "집무실 공덕점",
+      "address": "서울 마포구 백범로31길 7 1동 114호 (SK공덕리더스뷰 103동 1층 상가)",
+      "lat": 37.54482,
+      "lng": 126.95295,
+      "url": "https://naver.me/Fy2BMztM"
     },
     {
-      "name": "홍대역 9번출구",
-      "lat": 37.5572,
-      "lng": 126.9245,
       "time": "20:00",
-      "memo": ""
+      "name": "홍대역 9번출구",
+      "address": "서울 마포구 양화로 160",
+      "lat": 37.55721,
+      "lng": 126.92454
     },
     {
-      "name": "퍼즐팩토리",
-      "lat": 37.5568,
-      "lng": 126.923,
       "time": "20:20",
-      "memo": "https://naver.me/GfCkWu5e"
+      "name": "퍼즐팩토리",
+      "address": "서울 마포구 양화로 120 지하1층",
+      "lat": 37.55557,
+      "lng": 126.92273,
+      "url": "https://naver.me/GfCkWu5e"
     },
     {
-      "name": "도깨비집 홍대",
-      "lat": 37.557,
-      "lng": 126.925,
       "time": "00:30",
-      "memo": "https://naver.me/GZDtaD5Q"
+      "name": "도깨비집 홍대",
+      "address": "서울 마포구 와우산로 71 1층, 2층",
+      "lat": 37.54973,
+      "lng": 126.92257,
+      "url": "https://naver.me/GZDtaD5Q"
     }
   ]
 }
