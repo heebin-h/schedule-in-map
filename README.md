@@ -25,7 +25,7 @@
 5. 커밋 & 푸시 → 사이트에 바로 반영 (Pages 재배포 1~2분)
 
 **방법 B — 파일 직접 편집**
-`data/trips/seoul-day.json` 형식 참고해서 작성. 초대 코드를 걸려면 `code`에 코드를 넣고, `index.json` 항목에 `"locked": true` 표시.
+`data/trips/seoul-day.json` 형식 참고해서 작성. 초대 코드를 걸려면 `codeHash`에 코드의 SHA-256 값을 넣고, `index.json` 항목에 `"locked": true` 표시.
 
 ## 브랜치별 일정 세트
 
@@ -42,9 +42,8 @@ https://heebin-h.github.io/schedule-in-map/?b=jeju-trip
 
 ## 초대 코드에 대해
 
-코드는 일정 JSON의 `code` 필드에 평문으로 저장됨. 정적 사이트 특성상 일정 데이터(JSON)는 주소만 알면 직접 받을 수 있어 **가벼운 잠금**이지 보안 장치가 아님. 민감한 정보는 넣지 말 것.
-
-> 이전엔 SHA-256 해시(`codeHash`)로 저장했으나, `crypto.subtle`이 secure context(https·localhost) 밖에선 없어 코드 검증이 조용히 실패하는 문제가 있어 평문 `code`로 전환함. 어차피 데이터가 공개라 해시는 실질 보안이 아니었음.
+코드는 SHA-256 해시로만 저장돼서 파일을 열어봐도 코드 자체는 안 보임.
+다만 정적 사이트 특성상 일정 데이터(JSON)는 주소를 알면 직접 받을 수 있어서, **가벼운 잠금**이지 보안 장치가 아님. 민감한 정보는 넣지 말 것.
 
 ## 내 위치
 

@@ -1,8 +1,8 @@
 {
   "title": "[로봇고] 7/25-26 홍대 약속 일정",
-  "date": "2026. 7. 25-26 (토-일)",
-  "code": "0725",
-  "stops": [
+  "date": "2026.07.25-26",
+  "codeHash": "1426279dcbdf749f1edd7e89fd9db820fc3e5ce2930fa63ce9c5dce9af3da447",
+  "places": [
     {
       "time": "12:00",
       "name": "집무실 공덕점",
@@ -12,18 +12,19 @@
       "url": "https://naver.me/Fy2BMztM"
     },
     {
-      "time": "19:00",
-      "name": "여련이 픽업",
-      "address": "공덕역",
-      "lat": 37.54413,
-      "lng": 126.9514
-    },
-    {
       "time": "20:00",
       "name": "홍대역 9번출구",
       "address": "서울 마포구 양화로 160",
       "lat": 37.55721,
       "lng": 126.92454
+    },
+    {
+      "time": "20:20",
+      "name": "퍼즐팩토리",
+      "address": "서울 마포구 양화로 120 지하1층",
+      "lat": 37.55557,
+      "lng": 126.92273,
+      "url": "https://naver.me/GfCkWu5e"
     },
     {
       "time": "00:30",
