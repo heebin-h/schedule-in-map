@@ -6,7 +6,7 @@
 ._*
 
 # Custom folder icons
-Icon
+Icon
 
 # Volume root files
 .DocumentRevisions-V100
@@ -61,3 +61,7 @@ out/
 .yarn/unplugged
 .yarn/install-state.gz
 .pnp.*
+
+### oh-my-claudecode
+# 세션/플랜/핸드오프 등 운영 상태 — 앱과 무관, 커밋 대상 아님
+.omc/
