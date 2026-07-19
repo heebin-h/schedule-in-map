@@ -71,7 +71,7 @@ async function select(t) {
     alert("일정 데이터를 불러오지 못했어요: " + e.message);
     return;
   }
-  if (t.locked || trip.code) {
+  if (trip.codeHash) {
     $("code-title").textContent = trip.title;
     $("code-input").value = "";
     $("code-err").textContent = "";
@@ -85,16 +85,13 @@ async function select(t) {
 // ---------- 2. 코드 ----------
 $("code-btn").addEventListener("click", submitCode);
 $("code-input").addEventListener("keydown", e => { if (e.key === "Enter") submitCode(); });
-$("code-input").addEventListener("input", () => { $("code-err").textContent = ""; });
 $("code-back").addEventListener("click", () => show("list-screen"));
 
-function submitCode() {
+async function submitCode() {
   const code = $("code-input").value;
   if (!code.trim()) return;
-  if (verifyCode(trip, code)) { openViewer(); return; }
-  $("code-err").textContent = "❌ 초대 코드가 맞지 않아요";
-  $("code-input").focus();
-  $("code-input").select();
+  if (await verifyCode(trip, code)) openViewer();
+  else $("code-err").textContent = "초대 코드가 맞지 않아요";
 }
 
 // ---------- 3. 뷰어 ----------
@@ -122,17 +119,9 @@ function openViewer() {
       <div class="info">
         <div class="time">${esc(s.time || "")}</div>
         <div class="name">${esc(s.name)}</div>
-        ${s.address ? `<div class="address">${esc(s.address)}</div>` : ""}
-        ${s.url ? `<div class="map-link"><a href="${esc(s.url)}" target="_blank" rel="noopener">지도에서 보기 →</a></div>` : ""}
-        <div class="map-link"><a class="dir-btn" href="#">🧭 여기로 길찾기 →</a></div>
         ${s.memo ? `<div class="memo">${esc(s.memo)}</div>` : ""}
       </div>`;
     item.addEventListener("click", () => setActive(i, true));
-    item.querySelector(".dir-btn").addEventListener("click", e => {
-      e.preventDefault();
-      e.stopPropagation();
-      naverDirections(s.lat, s.lng, s.name, s.url);
-    });
     listEl.appendChild(item);
     return item;
   });
@@ -144,17 +133,6 @@ function setActive(i, fly) {
   items[i].scrollIntoView({ block: "nearest", behavior: "smooth" });
   if (fly) map.flyTo([trip.stops[i].lat, trip.stops[i].lng], Math.max(map.getZoom(), 15), { duration: .6 });
   routeMarkers[i].openPopup();
-}
-
-// 현재 위치 → 정거장 길찾기. 네이버 앱 스킴(출발지 생략=현 위치, 대중교통)을 열고,
-// 앱이 안 뜨면(데스크톱·미설치) 웹으로 폴백. 웹 폴백은 정거장의 naver.me 링크(있으면) → 없으면 장소검색.
-function naverDirections(lat, lng, name, fallbackUrl) {
-  const app = `nmap://route/public?dlat=${lat}&dlng=${lng}&dname=${encodeURIComponent(name)}&appname=schedule-in-map`;
-  const web = fallbackUrl || `https://map.naver.com/p/search/${encodeURIComponent(name)}`;
-  const t = setTimeout(() => { window.location.href = web; }, 1200);
-  // 앱이 열리면 탭이 백그라운드로 가며 visibilitychange 발생 → 웹 폴백 취소
-  document.addEventListener("visibilitychange", () => { if (document.hidden) clearTimeout(t); }, { once: true });
-  window.location.href = app;
 }
 
 $("viewer-back").addEventListener("click", () => {

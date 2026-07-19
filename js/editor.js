@@ -1,5 +1,6 @@
 // 일정 만들기 도구. 저장소에 아무것도 쓰지 않음 —
 // 지도로 편집 → JSON 내려받기 → data/trips/에 넣고 index.json에 등록 → 푸시.
+import { sha256 } from "./data.js";
 import { createMap, renderRoute, clearLayers, esc } from "./map.js";
 
 const $ = id => document.getElementById(id);
@@ -83,9 +84,10 @@ $("load-input").addEventListener("change", async e => {
     $("f-id").value = file.name.replace(/\.json$/, "");
     $("f-title").value = t.title || "";
     $("f-date").value = t.date || "";
-    $("f-code").value = t.code || "";
+    $("f-code").value = ""; // 코드는 해시만 저장돼 있어 복원 불가 — 새로 입력
     stops = t.stops || [];
     refresh(true);
+    if (t.codeHash) setMsg("기존 파일에 초대 코드가 있었어요. 유지하려면 코드를 다시 입력하세요.", "");
   } catch {
     setMsg("JSON 파일을 읽을 수 없어요", "err");
   }
@@ -106,7 +108,7 @@ $("export-btn").addEventListener("click", async () => {
   if (stops.some(s => !s.name.trim())) return setMsg("이름 없는 정거장이 있어요", "err");
 
   const trip = { title, date, stops };
-  if (code) trip.code = code;
+  if (code) trip.codeHash = await sha256(code);
 
   // 파일 다운로드
   const blob = new Blob([JSON.stringify(trip, null, 2)], { type: "application/json" });
