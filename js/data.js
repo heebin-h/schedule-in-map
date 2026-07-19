@@ -4,7 +4,7 @@
 // ?b=브랜치: raw.githubusercontent.com 에서 해당 브랜치의 data/ 를 fetch
 //
 // data/index.json          → { trips: [ { id, title, date, locked } ] }
-// data/trips/{id}.json     → { title, date, codeHash?, stops: [...] }
+// data/trips/{id}.json     → { title, date, code?, stops: [...] }
 
 import { REPO } from "../config.js";
 
@@ -32,13 +32,10 @@ export async function getTrip(id) {
   return fetchJson(`data/trips/${id}.json`);
 }
 
-export async function sha256(text) {
-  const buf = await crypto.subtle.digest("SHA-256", new TextEncoder().encode(text));
-  return [...new Uint8Array(buf)].map(b => b.toString(16).padStart(2, "0")).join("");
-}
-
-// 초대 코드 검증. 코드가 설정 안 된 일정(codeHash 없음)은 통과.
-export async function verifyCode(trip, code) {
-  if (!trip.codeHash) return true;
-  return (await sha256(code.trim())) === trip.codeHash;
+// 초대 코드 검증. 게이트 여부는 viewer 에서 index.locked || trip.code 로 판단하고,
+// 여기선 코드 일치만 본다. code 가 없으면(잠금 오설정·데이터 불일치) 어떤 입력도 불일치 → 안전하게 닫힘.
+// ponytail: 평문 비교. 정적 사이트라 JSON이 어차피 공개(README)라 해시는 실질 보안이 아니었고,
+//           crypto.subtle 은 secure context(https·localhost) 밖에선 없어서 검증이 조용히 실패했음.
+export function verifyCode(trip, code) {
+  return code.trim() === trip.code;
 }

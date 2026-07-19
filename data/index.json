@@ -1,16 +1,16 @@
 {
   "trips": [
     {
-      "id": "seoul-day",
-      "title": "서울 당일치기",
-      "date": "2026. 7. 18 (토)",
-      "locked": true
+      "id": "coex-character-fair",
+      "title": "캐릭터라이선싱페어 (코엑스)",
+      "date": "2026. 7. 17 (금)",
+      "locked": false
     },
     {
       "id": "robotgo-hongdae",
       "title": "[로봇고] 7/25-26 홍대 약속 일정",
-      "date": "2026. 7. 25-26",
-      "locked": false
+      "date": "2026. 7. 25-26 (토-일)",
+      "locked": true
     }
   ]
 }
