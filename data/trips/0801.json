@@ -1,0 +1,32 @@
+{
+  "title": "8/1 일정",
+  "date": "2026. 8. 1 (토)",
+  "code": "1030",
+  "stops": [
+    {
+      "time": "09:00",
+      "name": "코엑스 전시관",
+      "address": "서울 강남구 영동대로 513 코엑스",
+      "lat": 37.51187,
+      "lng": 127.05911,
+      "url": "https://map.naver.com/p/search/%EC%BD%94%EC%97%91%EC%8A%A4%20%EC%A0%84%EC%8B%9C%EA%B4%80",
+      "memo": "루아 작가님"
+    },
+    {
+      "time": "18:00",
+      "name": "별마당 도서관",
+      "address": "서울 강남구 영동대로 513 코엑스몰",
+      "lat": 37.5127,
+      "lng": 127.0585,
+      "url": "https://map.naver.com/p/search/%EB%B3%84%EB%A7%88%EB%8B%B9%20%EB%8F%84%EC%84%9C%EA%B4%80"
+    },
+    {
+      "time": "21:00",
+      "name": "새싹 마을 마당",
+      "address": "서울 동대문구 휘경동 281-29",
+      "lat": 37.587882,
+      "lng": 127.0584289,
+      "url": "https://map.naver.com/p/search/%EC%83%88%EC%8B%B9%20%EB%A7%88%EC%9D%84%20%EB%A7%88%EB%8B%B9%20%ED%9C%98%EA%B2%BD%EB%8F%99"
+    }
+  ]
+}
