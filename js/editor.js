@@ -16,13 +16,13 @@ map.on("click", e => {
     stops[repinIndex].lng = lng;
     repinIndex = null;
   } else {
-    stops.push({ name: `정거장 ${stops.length + 1}`, time: "", memo: "", lat, lng });
+    stops.push({ name: `정거장 ${stops.length + 1}`, time: "", address: "", url: "", memo: "", lat, lng });
   }
   refresh();
 });
 
 $("add-stop-btn").addEventListener("click", () => {
-  stops.push({ name: `정거장 ${stops.length + 1}`, time: "", memo: "", lat: null, lng: null });
+  stops.push({ name: `정거장 ${stops.length + 1}`, time: "", address: "", url: "", memo: "", lat: null, lng: null });
   refresh();
 });
 
@@ -43,7 +43,13 @@ function refresh(fit = false) {
         <input class="time-in" data-f="time" placeholder="10:00" value="${esc(s.time)}">
       </div>
       <div class="r2">
-        <input data-f="memo" placeholder="메모 (선택)" value="${esc(s.memo)}">
+        <input data-f="address" placeholder="주소 (선택)" value="${esc(s.address || '')}">
+      </div>
+      <div class="r2">
+        <input data-f="url" placeholder="지도 링크 URL (선택)" value="${esc(s.url || '')}">
+      </div>
+      <div class="r2">
+        <input data-f="memo" placeholder="메모 (선택)" value="${esc(s.memo || '')}">
       </div>
       <div class="r3">
         <div class="coord ${s.lat == null ? "unset" : ""}">
