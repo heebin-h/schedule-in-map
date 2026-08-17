@@ -126,6 +126,7 @@ label {
 .leaflet-popup-content { margin: 12px 16px; }
 .popup-time { font-size: 12px; font-weight: 700; color: var(--blue); }
 .popup-name { font-size: 15px; font-weight: 700; margin: 2px 0; color: var(--text); }
+.popup-address { font-size: 12px; color: var(--text-sub); margin-top: 2px; }
 .popup-memo { font-size: 13px; color: var(--text-weak); }
 
 @media (prefers-reduced-motion: reduce) {

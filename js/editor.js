@@ -105,13 +105,21 @@ $("export-btn").addEventListener("click", async () => {
   const date = $("f-date").value.trim();
   const code = $("f-code").value.trim();
 
-  if (!/^[a-z0-9-]+$/i.test(id)) return setMsg("파일 이름은 영문/숫자/하이픈만", "err");
+  if (!/^[a-z0-9-]+$/.test(id)) return setMsg("파일 이름은 영문 소문자/숫자/하이픈만", "err");
   if (!title) return setMsg("제목을 입력하세요", "err");
   if (!stops.length) return setMsg("정거장을 1개 이상 추가하세요", "err");
   if (stops.some(s => s.lat == null)) return setMsg("좌표 없는 정거장이 있어요 (📍 후 지도 클릭)", "err");
   if (stops.some(s => !s.name.trim())) return setMsg("이름 없는 정거장이 있어요", "err");
 
-  const trip = { title, date, stops };
+  const cleanStops = stops.map(({ name, lat, lng, time, address, url, memo }) => {
+    const s = { name, lat, lng };
+    if (time) s.time = time;
+    if (address) s.address = address;
+    if (url) s.url = url;
+    if (memo) s.memo = memo;
+    return s;
+  });
+  const trip = { title, date, stops: cleanStops };
   if (code) trip.code = code;
 
   // 파일 다운로드

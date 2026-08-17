@@ -33,6 +33,7 @@ export function renderRoute(map, stops, onMarkerClick, fit = true) {
     m.bindPopup(`
       <div class="popup-time">${esc(s.time || "")}</div>
       <div class="popup-name">${esc(s.name)}</div>
+      ${s.address ? `<div class="popup-address">${esc(s.address)}</div>` : ""}
       ${s.memo ? `<div class="popup-memo">${esc(s.memo)}</div>` : ""}
     `);
     if (onMarkerClick) m.on("click", () => onMarkerClick(i));
