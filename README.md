@@ -71,6 +71,18 @@ https://heebin-h.github.io/schedule-in-map/?b=jeju-trip
 
 뷰어의 "내 위치 표시"는 **본인 화면에만** 표시됨 (서버가 없어 다른 사람과 실시간 공유는 불가).
 
+## 로컬 실행
+
+ES module(`import`/`export`) 사용으로 `file://` 직접 열기 불가. HTTP 서버 필요:
+
+```sh
+python -m http.server 8080
+# 또는
+npx serve .
+```
+
+이후 `http://localhost:8080` 접속. `?b=브랜치` 기능은 로컬에서 테스트 불가 (raw.githubusercontent.com 접근 필요).
+
 ## 배포
 
 GitHub Pages: Settings → Pages → Branch `main` / root.
